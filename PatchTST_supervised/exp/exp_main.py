@@ -221,7 +221,7 @@ class Exp_Main(Exp_Basic):
         
         if test:
             print('loading model')
-            self.model.load_state_dict(torch.load(path)
+            self.model.load_state_dict(torch.load(path))
 
         preds = []
         trues = []
@@ -316,7 +316,7 @@ class Exp_Main(Exp_Basic):
         pred_data, pred_loader = self._get_data(flag='pred')
 
         if load:
-            self.model.load_state_dict(path)
+            self.model.load_state_dict(torch.load(path))
 
         preds = []
 
