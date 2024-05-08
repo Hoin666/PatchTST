@@ -368,12 +368,8 @@ class Exp_Main(Exp_Basic):
                 inputx.append(batch_x.detach().cpu().numpy())
 
         preds = np.array(preds)
-        trues = np.array(trues)
-        inputx = np.array(inputx)
-
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
-        trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
-        inputx = inputx.reshape(-1, inputx.shape[-2], inputx.shape[-1])
+
 
         # result save
         folder_path = './results/' + setting + '/'
@@ -381,7 +377,6 @@ class Exp_Main(Exp_Basic):
             os.makedirs(folder_path)
 
         # np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe,rse, corr]))
-        np.save(folder_path + 'real_pred.npy', preds)
-        np.save(folder_path + 'real_true.npy', trues)
+        np.save(folder_path + 'real_prediction.npy', preds)
         # np.save(folder_path + 'x.npy', inputx)
         return
