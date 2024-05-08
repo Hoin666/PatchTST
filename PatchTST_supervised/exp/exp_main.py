@@ -330,7 +330,7 @@ class Exp_Main(Exp_Basic):
                 batch_y_mark = batch_y_mark.float().to(self.device)
 
                 # decoder input
-                dec_inp = torch.zeros([batch_y.shape[0], self.args.pred_len, batch_y.shape[2]]).float().to(batch_y.device)
+                dec_inp = torch.zeros_like(batch_y[:, -self.args.pred_len:, :]).float()
                 dec_inp = torch.cat([batch_y[:, :self.args.label_len, :], dec_inp], dim=1).float().to(self.device)
                 # encoder - decoder
                 if self.args.use_amp:
@@ -350,17 +350,36 @@ class Exp_Main(Exp_Basic):
                             outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
                         else:
                             outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-                pred = outputs.detach().cpu().numpy()  # .squeeze()
+                            
+                f_dim = -1 if self.args.features == 'MS' else 0
+                # print(outputs.shape,batch_y.shape)
+                outputs = outputs[:, -self.args.pred_len:, f_dim:]
+                batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+                outputs = outputs.detach().cpu().numpy()
+                batch_y = batch_y.detach().cpu().numpy()
+
+                pred = outputs  # outputs.detach().cpu().numpy()  # .squeeze()
+                true = batch_y  # batch_y.detach().cpu().numpy()  # .squeeze()
+
                 preds.append(pred)
+                trues.append(true)
+                inputx.append(batch_x.detach().cpu().numpy())
 
         preds = np.array(preds)
+        trues = np.array(trues)
+        inputx = np.array(inputx)
+
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
+        trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
+        inputx = inputx.reshape(-1, inputx.shape[-2], inputx.shape[-1])
 
         # result save
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        np.save(folder_path + 'real_prediction.npy', preds)
-
+        # np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe,rse, corr]))
+        np.save(folder_path + 'real_pred.npy', preds)
+        np.save(folder_path + 'real_true.npy', trues)
+        # np.save(folder_path + 'x.npy', inputx)
         return
