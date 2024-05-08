@@ -320,6 +320,8 @@ class Exp_Main(Exp_Basic):
             self.model.load_state_dict(torch.load(path))
 
         preds = []
+        trues = []
+        inputx = []
 
         self.model.eval()
         with torch.no_grad():
