@@ -312,7 +312,7 @@ class Exp_Main(Exp_Basic):
         # np.save(folder_path + 'x.npy', inputx)
         return
 
-    def predict(self, setting, load=True):
+    def predict(self, setting, path, load=True):
         pred_data, pred_loader = self._get_data(flag='pred')
 
         if load:
