@@ -221,7 +221,7 @@ class Exp_Main(Exp_Basic):
         
         if test:
             print('loading model')
-            self.model.load_state_dict(torch.load(path))
+            self.model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 
         preds = []
         trues = []
@@ -312,12 +312,12 @@ class Exp_Main(Exp_Basic):
         # np.save(folder_path + 'x.npy', inputx)
         return
 
-    def predict(self, setting, path, load=True):
+    def predict(self, setting, path, save_path, load=True):
         pred_data, pred_loader = self._get_data(flag='pred')
 
         if load:
             print('loading model')
-            self.model.load_state_dict(torch.load(path))
+            self.model.load_state_dict(torch.load(path, map_location=torch.device('cpu')))
 
         preds = []
         trues = []
@@ -372,7 +372,7 @@ class Exp_Main(Exp_Basic):
 
 
         # result save
-        folder_path = './results/' + setting + '/'
+        folder_path = './' + save_path + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
